@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ömer Faruk Şahin, Senior Data Analyst building toward Data Engineering</title>
+<meta name="description" content="Interactive CV of Ömer Faruk Şahin: e-commerce analytics, KPI reporting, and the move into data engineering.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E2A35;
+    --panel: #143743;
+    --line: #3C6072;
+    --ink: #EAF1F3;
+    --dim: #8FB0BD;
+    --amber: #F5B942;
+    --display: "Bricolage Grotesque", ui-sans-serif, "Segoe UI", Helvetica, Arial, sans-serif;
+    --body: "IBM Plex Sans", ui-sans-serif, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 1.0625rem/1.6 var(--body);
+  }
+  a { color: var(--amber); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
+  main { max-width: 1040px; margin: 0 auto; padding: 72px 24px 96px; }
+
+  h1, h2, h3 { font-family: var(--display); margin: 0; letter-spacing: -0.02em; line-height: 1.1; }
+  h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); font-weight: 700; }
+  h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 700; margin-bottom: 12px; }
+  h3 { font-size: 1.25rem; font-weight: 700; }
+  p { margin: 0 0 1em; max-width: 62ch; }
+  .dim { color: var(--dim); }
+
+  header { margin-bottom: 88px; }
+  header .role { font: 500 1.25rem/1.4 var(--display); color: var(--dim); margin: 16px 0 24px; }
+  header .role b { color: var(--amber); font-weight: 700; }
+
+  section { margin-bottom: 88px; }
+
+  /* career pipeline */
+  .track {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    list-style: none;
+    margin: 56px 0 0;
+    padding: 0;
+  }
+  .track::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: calc(100% / 14);
+    right: calc(100% * 1.5 / 7);
+    height: 3px;
+    background: var(--line);
+  }
+  .track::after {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: calc(100% * 5.5 / 7);
+    right: calc(100% / 14);
+    border-top: 3px dashed var(--amber);
+    height: 0;
+  }
+  .lane {
+    position: absolute;
+    top: 0;
+    left: calc(100% / 14);
+    right: calc(100% / 14);
+    height: 22px;
+    pointer-events: none;
+  }
+  .lane i {
+    position: absolute;
+    top: 7px;
+    left: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--amber);
+    opacity: 0;
+    animation: flow 10s linear infinite;
+  }
+  .lane i:nth-child(2) { animation-delay: 2s; }
+  .lane i:nth-child(3) { animation-delay: 4s; }
+  .lane i:nth-child(4) { animation-delay: 6s; }
+  .lane i:nth-child(5) { animation-delay: 8s; }
+  @keyframes flow {
+    0% { left: 0; opacity: 0; }
+    6% { opacity: 1; }
+    94% { opacity: 1; }
+    100% { left: calc(100% - 8px); opacity: 0; }
+  }
+
+  .node {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    padding: 0 4px 12px;
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    text-align: center;
+    cursor: pointer;
+  }
+  .node .dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--line);
+    border: 3px solid var(--dim);
+    transition: transform .15s ease, background .15s ease;
+  }
+  .node:hover .dot { transform: scale(1.2); }
+  .node .yr { font-size: .8125rem; font-weight: 600; color: var(--dim); margin-top: 6px; }
+  .node .lbl { font-size: .9375rem; line-height: 1.3; }
+  .node[aria-pressed="true"] .dot { background: var(--amber); border-color: var(--bg); box-shadow: 0 0 0 3px var(--amber); }
+  .node[aria-pressed="true"] .lbl { font-weight: 600; }
+  .node.target .dot { background: var(--bg); border: 3px dashed var(--amber); }
+  .node.target[aria-pressed="true"] .dot { background: var(--amber); border-style: solid; border-color: var(--bg); }
+  .node.target .yr, .node.target .lbl { color: var(--amber); font-weight: 600; }
+  .node.target .dot::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 22px;
+    height: 22px;
+    margin-left: -11px;
+    border-radius: 50%;
+    border: 2px solid var(--amber);
+    animation: pulse 2.4s ease-out infinite;
+    pointer-events: none;
+  }
+  @keyframes pulse { 0% { transform: scale(1); opacity: .9; } 100% { transform: scale(2.4); opacity: 0; } }
+
+  .detail {
+    margin-top: 32px;
+    padding: 32px;
+    min-height: 320px;
+    background: var(--panel);
+    border-left: 4px solid var(--amber);
+  }
+  .detail .meta { color: var(--dim); margin: 6px 0 20px; }
+  .detail ul { margin: 0; padding-left: 1.2em; max-width: 70ch; }
+  .detail li { margin-bottom: .55em; }
+  .detail li ul { margin-top: .55em; }
+
+  /* stack */
+  .stack { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 32px; }
+  .stack h3 { padding-top: 16px; border-top: 3px solid var(--line); position: relative; margin-bottom: 12px; }
+  .stack h3::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: 0;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--amber);
+  }
+  .stack ul { list-style: none; margin: 0; padding: 0; }
+  .stack li { padding: 4px 0; }
+  .extra { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; margin-top: 40px; }
+  .extra h3 { font-size: 1.05rem; margin-bottom: 6px; color: var(--dim); }
+  .extra p { margin: 0; }
+
+  footer { border-top: 1px solid var(--line); padding-top: 24px; display: flex; flex-wrap: wrap; gap: 8px 32px; }
+
+  @media (max-width: 760px) {
+    main { padding: 48px 20px 72px; }
+    .track { grid-template-columns: 1fr; margin-top: 32px; }
+    .track::before { left: 10px; right: auto; top: 12px; bottom: 40px; width: 3px; height: auto; }
+    .track::after { display: none; }
+    .lane { display: none; }
+    .node { flex-direction: row; align-items: center; gap: 14px; text-align: left; padding: 10px 0; }
+    .node .yr { margin: 0; min-width: 3.2rem; }
+    .node .dot { flex: none; }
+    .node.target .dot::after { left: 11px; margin-left: 0; }
+    .stack { grid-template-columns: 1fr 1fr; }
+    .extra { grid-template-columns: 1fr; }
+    .detail { padding: 24px 20px; min-height: 0; }
+  }
+  @media (max-width: 480px) { .stack { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .lane i, .node.target .dot::after { animation: none; }
+    .lane i { opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <header>
+    <h1>Ömer Faruk Şahin</h1>
+    <p class="role">Senior Data Analyst in Istanbul, building toward <b>Data Engineering</b></p>
+    <p>I turn sales, returns, inventory, and operations data from e-commerce brands into KPI dashboards that teams use every day. I work in SQL Server, MongoDB, and Tableau. Next, I want to build the pipelines underneath those dashboards.</p>
+  </header>
+
+  <section aria-labelledby="career">
+    <h2 id="career">Career, as a pipeline</h2>
+    <p class="dim">Each node is a stage. Select one to see what I did there.</p>
+    <ol class="track" id="track">
+      <li class="lane" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></li>
+    </ol>
+    <div class="detail" id="detail" aria-live="polite"></div>
+  </section>
+
+  <section aria-labelledby="stack">
+    <h2 id="stack">My tools, by pipeline stage</h2>
+    <div class="stack">
+      <div>
+        <h3>Ingest</h3>
+        <ul>
+          <li>SSIS ETL processes</li>
+          <li>Live brand-period syncs</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Transform</h3>
+        <ul>
+          <li>T-SQL</li>
+          <li>MongoDB aggregation pipelines</li>
+          <li>Tableau Prep</li>
+          <li>Power Query and DAX</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Store</h3>
+        <ul>
+          <li>Microsoft SQL Server</li>
+          <li>MySQL</li>
+          <li>MongoDB</li>
+          <li>Materialized views</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Serve</h3>
+        <ul>
+          <li>Tableau Desktop and Cloud</li>
+          <li>Power BI</li>
+          <li>Owl, an internal KPI application</li>
+          <li>Excel exports</li>
+        </ul>
+      </div>
+    </div>
+    <div class="extra">
+      <div>
+        <h3>Validate</h3>
+        <p>Data reconciliation, KPI validation, root-cause analysis</p>
+      </div>
+      <div>
+        <h3>AI-assisted workflows</h3>
+        <p>Cursor, MCP-connected tools, Gemini KPI assistant, Claude Code</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="edu">
+    <h2 id="edu">Education</h2>
+    <p>Pamukkale University, Industrial Engineering (2014)<br>
+    <span class="dim">Certification: Google Cloud, Introduction to Data Engineering</span></p>
+  </section>
+
+  <footer>
+    <a href="https://www.linkedin.com/in/%C3%B6mer-faruk-%C5%9Fahin-822526138">LinkedIn</a>
+    <a href="https://github.com/engofs0120">GitHub</a>
+  </footer>
+
+</main>
+
+<script>
+  const stages = [
+    {
+      year: "2016", label: "HR Data Analyst",
+      title: "HR Data Analyst",
+      org: "Sigorta Bilgi ve Gözetim Merkezi",
+      dates: "May 2016 to Sep 2017, Istanbul",
+      points: [
+        "Analyzed HR data on employee performance, turnover, and recruitment to support strategic decisions.",
+        "Organized the transition to the SAP HR module.",
+        "Designed employee performance-tracking dashboards with Excel and Power Pivot."
+      ]
+    },
+    {
+      year: "2017", label: "Founder, e-commerce",
+      title: "Founder",
+      org: "UFS Center E-Commerce Company",
+      dates: "Sep 2017 to Mar 2019, Istanbul",
+      points: [
+        "Ran multi-channel sales on Trendyol, Hepsiburada, N11, and Amazon.",
+        "Coordinated supply chain, inventory, and logistics, and handled customer relationships and after-sales support.",
+        "Analyzed and optimized marketplace performance, product listings, content, and digital marketing."
+      ]
+    },
+    {
+      year: "2019", label: "Reporting and Data Analyst",
+      title: "Reporting and Data Analyst Specialist",
+      org: "KVK Teknoloji Ürünleri",
+      dates: "Mar 2019 to Apr 2021, Istanbul",
+      points: [
+        "Monitored and analyzed service metrics, including repair durations, parts replacement rates, and customer satisfaction scores.",
+        "Built KPI reports on technical service performance and presented them to senior management.",
+        "Ran Turnaround Time (TAT) analyses with technical teams to find ways to speed up repairs.",
+        "Extracted and analyzed database insights with SQL."
+      ]
+    },
+    {
+      year: "2021", label: "Senior Analyst, Koton",
+      title: "Senior Data Analyst",
+      org: "Koton",
+      dates: "Apr 2021 to Apr 2023, Türkiye",
+      points: [
+        "Developed dynamic dashboards and complex SQL queries for data-driven decision-making.",
+        "Built analytical reports, dashboards, and visualizations as BI solutions.",
+        "Automated daily, weekly, and monthly reporting with Power Pivot, DAX, Power Query, and XLOOKUP.",
+        "Designed Power BI reports for senior management.",
+        "Designed SSIS ETL processes to extract, transform, and load data from multiple sources."
+      ]
+    },
+    {
+      year: "2023", label: "Freelance and KVK",
+      title: "Senior Data Analyst",
+      org: "Freelance and KVK Teknoloji Ürünleri",
+      dates: "Freelance from Jun 2023. KVK Teknoloji Ürünleri, Jan 2024 to Dec 2024",
+      points: [
+        "Senior Data Analyst work on freelance analytics projects since June 2023, and at KVK Teknoloji Ürünleri from January to December 2024."
+      ]
+    },
+    {
+      year: "2025", label: "Senior Analyst, RND",
+      title: "Senior Data Analyst",
+      org: "RND E-commerce Fulfillment",
+      dates: "Jan 2025 to present",
+      points: [
+        "Build daily, weekly, monthly, and yearly marketplace and e-commerce KPI dashboards for global and local brands, including The North Face, Vans, Timberland, Calvin Klein, Guess, Pandora, Benetton, Levi's, and Tommy Hilfiger.",
+        "Extract, transform, and visualize data with MSSQL, MongoDB, Tableau Desktop, Tableau Cloud, and Tableau Prep. Automated dashboards cover sales, conversion, and operational KPIs.",
+        "Design interactive Tableau reports for marketing and management teams, and build backoffice reports from MSSQL queries embedded in XML.",
+        "Develop MongoDB reports for sales and returns using aggregation pipelines and materialized views.",
+        { text: "Extend Owl, RND's internal KPI application that consolidates brand-level sales, returns, inventory, traffic, and customer-service data from multiple systems:", sub: [
+          "Aligned return-acceptance and delivery-time calculations with e-commerce figures.",
+          "Added order, unit, and sales-value columns and increase/decrease indicators to the city, division, season, and Top 10 returns tables.",
+          "Added account-level brand access, Turkish and English interface support, and downloadable Excel exports.",
+          "Ran live brand-period syncs and verified invoice and quantity fields."
+        ]},
+        "Use Cursor agents and MCP-connected tools for data exploration, query development, and root-cause analysis. Use the Gemini KPI assistant to query report figures in natural language, and fixed a stalled Gemini translation flow."
+      ]
+    },
+    {
+      year: "Next", label: "Data Engineer", target: true,
+      title: "Data Engineer",
+      org: "The next stage",
+      dates: "In progress",
+      points: [
+        "ETL design with SSIS.",
+        "MongoDB aggregation pipelines and materialized views.",
+        "T-SQL and query development across SQL Server and MySQL.",
+        "Data reconciliation and root-cause analysis on production reporting.",
+        "Certification: Google Cloud, Introduction to Data Engineering."
+      ],
+      heading: "What I already bring to the role"
+    }
+  ];
+
+  const track = document.getElementById("track");
+  const detail = document.getElementById("detail");
+  const nodes = [];
+
+  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+
+  function renderPoints(points) {
+    return "<ul>" + points.map(p => {
+      if (typeof p === "string") return "<li>" + esc(p) + "</li>";
+      return "<li>" + esc(p.text) + "<ul>" + p.sub.map(s => "<li>" + esc(s) + "</li>").join("") + "</ul></li>";
+    }).join("") + "</ul>";
+  }
+
+  function select(i) {
+    nodes.forEach((n, j) => n.setAttribute("aria-pressed", String(i === j)));
+    const s = stages[i];
+    detail.innerHTML =
+      "<h3>" + esc(s.title) + "</h3>" +
+      '<p class="meta">' + esc(s.org) + ", " + esc(s.dates) + "</p>" +
+      (s.heading ? "<p><b>" + esc(s.heading) + "</b></p>" : "") +
+      renderPoints(s.points);
+  }
+
+  stages.forEach((s, i) => {
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "node" + (s.target ? " target" : "");
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="dot"></span><span class="yr">' + esc(s.year) + '</span><span class="lbl">' + esc(s.label) + "</span>";
+    b.addEventListener("click", () => select(i));
+    li.appendChild(b);
+    track.appendChild(li);
+    nodes.push(b);
+  });
+
+  select(5);
+</script>
+</body>
+</html>
